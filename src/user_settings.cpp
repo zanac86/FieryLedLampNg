@@ -1,3 +1,7 @@
+#include "user_settings.h"
+
+#include "globals.h"
+
 void updateSets()
 {
     loadingFlag = true;
@@ -44,7 +48,6 @@ void User_setings()
     HTTP.on("/all_br", handle_all_br);  // Общая яркость
     HTTP.on("/eff_save", handle_eff_save);  // Сохранить настройки эффектов в файл
     HTTP.on("/eff_read", handle_eff_read);  // Загрузить настройки эффектов из файла
-    HTTP.on("/alt", handle_alt_panel);   // Альтернативная главная web страница управления эффектами
 
     // --------------------Получаем SSID со страницы
     HTTP.on("/ssid", HTTP_GET, []()

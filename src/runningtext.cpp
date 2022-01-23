@@ -1,15 +1,10 @@
+#include <Arduino.h>
+#include <stdint.h>
+#include "globals.h"
+#include "utility.h"
+#include "fonts.h"
+
 // работа с бегущим текстом
-
-// --- НАСТРОЙКИ -----------------------
-#define TEXT_DIRECTION        (1U)                          // 1 - по горизонтали, 0 - по вертикали
-#define MIRR_V                (0U)                          // отразить текст по вертикали (0 / 1)
-#define MIRR_H                (0U)                          // отразить текст по горизонтали (0 / 1)
-
-#define TEXT_HEIGHT           (2U)                          // высота, на которой бежит текст (от низа матрицы)
-#define LET_WIDTH             (5U)                          // ширина буквы шрифта
-#define LET_HEIGHT            (8U)                          // высота буквы шрифта
-#define SPACE                 (1U)                          // пробел
-#define LETTER_COLOR          (CRGB::White)                 // цвет букв по умолчанию
 
 
 // --- ДЛЯ РАЗРАБОТЧИКОВ ---------------
@@ -17,50 +12,6 @@
 int16_t offset = WIDTH;
 uint32_t scrollTimer = 0LL;
 
-boolean fillString(const char* text, CRGB letterColor, boolean itsText)
-{
-    //CRGB letterColor = CHSV(modes[EFF_TEXT].Scale * 2.5 * 2.5, 255U, 255U);
-    //Serial.println(text);
-    if (!text || !strlen(text))
-    {
-        return true;
-    }
-    if (loadingFlag && !itsText)
-    {
-        offset = WIDTH;                                         // перемотка в правый край
-        loadingFlag = false;
-    }
-
-    if (millis() - scrollTimer >= modes[EFF_TEXT].Speed)
-    {
-        scrollTimer = millis();
-        FastLED.clear();
-        uint8_t i = 0, j = 0;
-        while (text[i] != '\0')
-        {
-            if ((uint8_t)text[i] > 191)                           // работаем с русскими буквами
-            {
-                i++;
-            }
-            else
-            {
-                drawLetter(text[i], offset + j * (LET_WIDTH + SPACE), letterColor);
-                i++;
-                j++;
-            }
-        }
-
-        offset--;
-        if (offset < (int16_t)(-j * (LET_WIDTH + SPACE)))       // строка убежала
-        {
-            offset = WIDTH + 3;
-            return true;
-        }
-        FastLED.show();
-    }
-
-    return false;
-}
 
 void drawLetter(uint8_t letter, int8_t offset, CRGB letterColor)
 {

@@ -5,7 +5,10 @@
 #ifndef CONSTANTS_H_
 #define CONSTANTS_H_
 
+#include <Arduino.h>
+#include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
+#include <LittleFS.h>
 
 // ============= НАСТРОЙКИ =============
 //#define USE_SECRET_COMMANDS                               // удалите эту строку, если вам не нужна возможность смены режимов работы ESP_MODE и обнуления настроек из приложения
@@ -313,83 +316,6 @@ static const uint8_t defaultSettings[][3] PROGMEM =
 
 //================ Дальше только для разработчиков. Не меняйте здесь ничего, если не уверены в результате!!! ===================
 
-//+++++Функции для работы с json файлами+++++++++++++++++++++++++++
-
-#include <ArduinoJson.h>        //Установить из менеджера библиотек версию 5.13.5 !!!. https://arduinojson.org/
-#include <LittleFS.h>
 #define SPIFFS LittleFS
-
-String configSetup = "{}";
-// ------------- Чтение значения json String
-String jsonRead(String& json, String name)
-{
-    DynamicJsonBuffer jsonBuffer;
-    JsonObject& root = jsonBuffer.parseObject(json);
-    return root[name].as<String>();
-}
-
-// ------------- Чтение значения json int
-int jsonReadtoInt(String& json, String name)
-{
-    DynamicJsonBuffer jsonBuffer;
-    JsonObject& root = jsonBuffer.parseObject(json);
-    return root[name];
-}
-
-// ------------- Запись значения json String
-void jsonWrite(String& json, String name, String volume)
-{
-    DynamicJsonBuffer jsonBuffer;
-    JsonObject& root = jsonBuffer.parseObject(json);
-    root[name] = volume;
-    json = "";
-    root.printTo(json);
-}
-
-// ------------- Запись значения json int
-void jsonWrite(String& json, String name, int volume)
-{
-    DynamicJsonBuffer jsonBuffer;
-    JsonObject& root = jsonBuffer.parseObject(json);
-    root[name] = volume;
-    json = "";
-    root.printTo(json);
-}
-
-// ------------- Запись строки в файл
-void writeFile(String fileName, String strings)
-{
-    File configFile = SPIFFS.open("/" + fileName, "w");
-    if (!configFile)
-    {
-        return;
-    }
-    configFile.print(strings);
-    //strings.printTo(configFile);
-    configFile.close();
-}
-void saveConfig()
-{
-    writeFile("config.json", configSetup);
-}
-
-// ------------- Чтение файла в строку
-String readFile(String fileName, size_t len)
-{
-    File configFile = SPIFFS.open("/" + fileName, "r");
-    if (!configFile)
-    {
-        return "Failed";
-    }
-    size_t size = configFile.size();
-    if (size > len)
-    {
-        configFile.close();
-        return "Large";
-    }
-    String temp = configFile.readString();
-    configFile.close();
-    return temp;
-}
 
 #endif

@@ -146,3 +146,105 @@ float sqrt3(const float x)
     u.i = (1 << 29) + (u.i >> 1) - (1 << 22);
     return u.x;
 }
+
+//по мотивам
+//https://gist.github.com/sutaburosu/32a203c2efa2bb584f4b846a91066583
+void drawPixelXYF(float x, float y, CRGB color) //, uint8_t darklevel = 0U)
+{
+    //  if (x<0 || y<0) return; //не похоже, чтобы отрицательные значения хоть как-нибудь учитывались тут // зато с этой строчкой пропадает нижний ряд
+    // extract the fractional parts and derive their inverses
+    uint8_t xx = (x - (int)x) * 255, yy = (y - (int)y) * 255, ix = 255 - xx, iy = 255 - yy;
+    // calculate the intensities for each affected pixel
+#define WU_WEIGHT(a,b) ((uint8_t) (((a)*(b)+(a)+(b))>>8))
+    uint8_t wu[4] = {WU_WEIGHT(ix, iy), WU_WEIGHT(xx, iy),
+                     WU_WEIGHT(ix, yy), WU_WEIGHT(xx, yy)
+                    };
+    // multiply the intensities by the colour, and saturating-add them to the pixels
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        int16_t xn = x + (i & 1), yn = y + ((i >> 1) & 1);
+        CRGB clr = getPixColorXY(xn, yn);
+        clr.r = qadd8(clr.r, (color.r * wu[i]) >> 8);
+        clr.g = qadd8(clr.g, (color.g * wu[i]) >> 8);
+        clr.b = qadd8(clr.b, (color.b * wu[i]) >> 8);
+        //if (darklevel) drawPixelXY(xn, yn, makeDarker(clr, darklevel));
+        //else
+        drawPixelXY(xn, yn, clr);
+    }
+}
+
+void drawCircleF(float x0, float y0, float radius, CRGB color)
+{
+    float x = 0, y = radius, error = 0;
+    float delta = 1. - 2. * radius;
+
+    while (y >= 0)
+    {
+        drawPixelXYF(fmod(x0 + x + WIDTH, WIDTH), y0 + y, color); // сделал, чтобы круги были бесшовными по оси х
+        drawPixelXYF(fmod(x0 + x + WIDTH, WIDTH), y0 - y, color);
+        drawPixelXYF(fmod(x0 - x + WIDTH, WIDTH), y0 + y, color);
+        drawPixelXYF(fmod(x0 - x + WIDTH, WIDTH), y0 - y, color);
+        error = 2. * (delta + y) - 1.;
+        if (delta < 0 && error <= 0)
+        {
+            ++x;
+            delta += 2. * x + 1.;
+            continue;
+        }
+        error = 2. * (delta - x) - 1.;
+        if (delta > 0 && error > 0)
+        {
+            --y;
+            delta += 1. - 2. * y;
+            continue;
+        }
+        ++x;
+        delta += 2. * (x - y);
+        --y;
+    }
+}
+
+boolean fillString(const char* text, CRGB letterColor, boolean itsText)
+{
+    //CRGB letterColor = CHSV(modes[EFF_TEXT].Scale * 2.5 * 2.5, 255U, 255U);
+    //Serial.println(text);
+    if (!text || !strlen(text))
+    {
+        return true;
+    }
+    if (loadingFlag && !itsText)
+    {
+        offset = WIDTH;                                         // перемотка в правый край
+        loadingFlag = false;
+    }
+
+    if (millis() - scrollTimer >= modes[EFF_TEXT].Speed)
+    {
+        scrollTimer = millis();
+        FastLED.clear();
+        uint8_t i = 0, j = 0;
+        while (text[i] != '\0')
+        {
+            if ((uint8_t)text[i] > 191)                           // работаем с русскими буквами
+            {
+                i++;
+            }
+            else
+            {
+                drawLetter(text[i], offset + j * (LET_WIDTH + SPACE), letterColor);
+                i++;
+                j++;
+            }
+        }
+
+        offset--;
+        if (offset < (int16_t)(-j * (LET_WIDTH + SPACE)))       // строка убежала
+        {
+            offset = WIDTH + 3;
+            return true;
+        }
+        FastLED.show();
+    }
+
+    return false;
+}

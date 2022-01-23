@@ -1,4 +1,7 @@
 #include "globals.h"
+#include "effects.h"
+#include "timermanager.h"
+#include "favoritesmanager.h"
 
 // Если вы хотите добавить эффекты или сделать им копии для демонстрации на разных настройках, нужно делать это в 5 местах:
 // 1. в файле effects.ino - добавляется программный код самого эффекта.
@@ -299,7 +302,7 @@ void effectsTick()
                 FeatherCandleRoutine();
                 break;  // (91U) Свеча
             case EFF_CLOCK:
-                clockRoutine();
+                text_running();
                 break;  // (92U) Чacы
             case EFF_TEXT:
                 text_running();

@@ -53,9 +53,9 @@ class FavoritesManager
             uint8_t* selectedSettings
         )
         {
-            if (FavoritesRunning == 0 ||
-                    !*ONflag                                          // лампа не переключается на следующий эффект при выключенной матрице
-                    || *currentMode == EFF_WHITE_COLOR && FavoriteModes[EFF_WHITE_COLOR] == 0U // лампа не переключается на следующий эффект, если выбран режим Белый свет, и он не в списке режима Цикл
+            if ((FavoritesRunning == 0)
+                    || (!*ONflag)                                          // лампа не переключается на следующий эффект при выключенной матрице
+                    || ((*currentMode == EFF_WHITE_COLOR) && (FavoriteModes[EFF_WHITE_COLOR] == 0U)) // лампа не переключается на следующий эффект, если выбран режим Белый свет, и он не в списке режима Цикл
                )
             {
                 return false;

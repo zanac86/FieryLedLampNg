@@ -28,7 +28,11 @@
 #include "favoritesmanager.h"
 #include "http_init.h"
 #include "fs.h"
+#include "user_settings.h"
+#include "utility.h"
+#include "effectticker.h"
 
+const uint8_t AP_STATIC_IP[] = {192, 168, 4, 1};            // статический IP точки доступа (лучше не менять!)
 
 void setup()  //==================================================================  void setup()  =========================================================================
 {

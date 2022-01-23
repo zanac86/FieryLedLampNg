@@ -1,5 +1,5 @@
-#ifndef GLOBALS_H
-#define GLOBALS_H
+#ifndef GLOBALS_H_
+#define GLOBALS_H_
 
 #include <Arduino.h>
 #include <stdint.h>
@@ -9,6 +9,7 @@
 #include <GyverButton.h>
 extern GButton touch;  // для сенсорной кнопки LOW_PULL
 #endif
+
 #include "constants.h"
 
 extern uint8_t DONT_TURN_ON_AFTER_SHUTDOWN;
@@ -30,5 +31,43 @@ extern CRGB leds[NUM_LEDS];
 extern uint8_t selectedSettings;
 
 extern ModeType modes[MODE_AMOUNT];
+
+extern uint32_t eepromTimeout;
+extern uint8_t currentMode;
+extern bool loadingFlag;
+extern bool ONflag;
+
+extern uint8_t random_on;
+extern uint32_t my_timer;
+extern uint8_t espMode;
+
+extern uint8_t Favorit_only;
+extern uint8_t ESP_CONN_TIMEOUT;
+extern uint8_t time_always;
+
+extern bool settChanged;
+extern bool buttonEnabled; // это важное первоначальное значение. нельзя делать false по умолчанию
+extern unsigned char matrixValue[8][16]; //это массив для эффекта Огонь
+
+extern const uint8_t maxDim;
+
+extern char TextTicker [80];
+
+extern String AP_NAME;
+extern String AP_PASS;
+extern String LAMP_NAME;
+
+extern bool connect;
+extern int Painting;
+
+String jsonRead(String& json, String name);
+int jsonReadtoInt(String& json, String name);
+void jsonWrite(String& json, String name, String value);
+void jsonWrite(String& json, String name, int value);
+void jsonWrite(String& json, String name, uint8_t value);
+void writeFile(String fileName, String strings);
+void saveConfig();
+String readFile(String fileName, size_t len);
+
 
 #endif

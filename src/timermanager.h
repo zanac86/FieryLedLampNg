@@ -1,15 +1,19 @@
-#pragma once
+#ifndef TIMER_MANAGER_H
+#define TIMER_MANAGER_H
 
+#include <Arduino.h>
+#include "stdint.h"
+#include "globals.h"
 
 class TimerManager
 {
     public:
-        static bool TimerRunning;                               // флаг "таймер взведён"
-        static bool TimerHasFired;                              // флаг "таймер отработал"
-        static uint8_t TimerOption;                             // индекс элемента в списке List Picker'а
-        static uint64_t TimeToFire;                             // время, в которое должен сработать таймер (millis)
+        static bool TimerRunning;   // флаг "таймер взведён"
+        static bool TimerHasFired;  // флаг "таймер отработал"
+        static uint8_t TimerOption; // индекс элемента в списке List Picker'а
+        static uint64_t TimeToFire; // время, в которое должен сработать таймер (millis)
 
-        static void HandleTimer(                                // функция, обрабатывающая срабатывание таймера, гасит матрицу
+        static void HandleTimer( // функция, обрабатывающая срабатывание таймера, гасит матрицу
             bool* ONflag,
             bool* settChanged,
             uint32_t* eepromTimeout,
@@ -32,3 +36,5 @@ class TimerManager
             }
         }
 };
+
+#endif

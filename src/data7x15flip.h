@@ -1,7 +1,8 @@
 #include <Arduino.h>
 #include <stdint.h>
 
-const uint8_t PROGMEM anim[] = {
+const uint8_t PROGMEM anim[] =
+{
     0X00, 0X6E,   //  frame000.png 0 6 0 14
     0X00, 0X00, 0X00, 0X00, 0X00, 0X00, 0X00,
     0X00, 0X00, 0X00, 0X00, 0X00, 0X00, 0X00,
